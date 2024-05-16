@@ -45,14 +45,6 @@ class ManufacturersSearchForm(forms.Form):
     )
 
 
-class CarsSearchForm(forms.Form):
-    model = forms.CharField(max_length=255, required=False)
-
-
-class ManufacturersSearchForm(forms.Form):
-    name = forms.CharField(max_length=255, required=False)
-
-
 class CarForm(forms.ModelForm):
     drivers = forms.ModelMultipleChoiceField(
         queryset=get_user_model().objects.all(),
