@@ -140,4 +140,51 @@ class PublicDriverListViewTest(TestCase):
 
 
 class PrivetDriverListViewTest(TestCase):
-    pass
+    @classmethod
+    def setUpTestData(cls):
+        number_of_drivers = 8
+
+        for driver_id in range(number_of_drivers):
+            get_user_model().objects.create_user(
+                username=f"Driver{driver_id}",
+                password="test123",
+                license_number=f"ABC1234{driver_id}"
+            )
+
+    def setUp(self):
+        self.client.force_login(get_user_model().objects.get(id=1))
+
+    def test_response_template(self):
+        res = self.client.get(reverse(DRIVER_LIST_URL))
+        self.assertEqual(res.status_code, 200)
+        self.assertTemplateUsed(res, "taxi/driver_list.html")
+
+    def test_pagination_is_5(self):
+        response = self.client.get(reverse(DRIVER_LIST_URL))
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue("is_paginated" in response.context)
+        self.assertTrue(response.context["is_paginated"] is True)
+        self.assertTrue(len(response.context["driver_list"]) == 5)
+        self.assertEqual(list(response.context["driver_list"]), list(get_user_model().objects.all()[:5]))
+
+    def test_list_all_cars(self):
+        response = self.client.get(reverse(DRIVER_LIST_URL) + "?page=2")
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue("is_paginated" in response.context)
+        self.assertTrue(response.context["is_paginated"] is True)
+        self.assertTrue(len(response.context["driver_list"]) == 3)
+        self.assertEqual(list(response.context["driver_list"]), list(get_user_model().objects.all()[5:]))
+
+    def test_view_search_form_in_context(self):
+        response = self.client.get(reverse(DRIVER_LIST_URL))
+        self.assertTrue("search_form" in response.context)
+
+    def test_search_form_on_queryset(self):
+        username = "1"
+        response = self.client.get(reverse(DRIVER_LIST_URL), {"username": username})
+        self.assertEqual(response.status_code, 200)
+
+        queryset = response.context["driver_list"]
+        filtered_queryset = get_user_model().objects.filter(username__icontains=username)
+
+        self.assertEqual(list(queryset), list(filtered_queryset))
