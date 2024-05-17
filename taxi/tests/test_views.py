@@ -45,7 +45,10 @@ class PrivetManufacturerListViewTest(TestCase):
         self.assertTrue("is_paginated" in response.context)
         self.assertTrue(response.context["is_paginated"] is True)
         self.assertEqual(len(response.context["manufacturer_list"]), 5)
-        self.assertEqual(list(response.context["manufacturer_list"]), list(Manufacturer.objects.all()[:5]))
+        self.assertEqual(
+            list(response.context["manufacturer_list"]),
+            list(Manufacturer.objects.all()[:5])
+        )
 
     def test_list_all_manufacturers(self):
         response = self.client.get(reverse(MANUFACTURER_LIST_URL) + "?page=2")
@@ -53,7 +56,10 @@ class PrivetManufacturerListViewTest(TestCase):
         self.assertTrue("is_paginated" in response.context)
         self.assertTrue(response.context["is_paginated"] is True)
         self.assertEqual(len(response.context["manufacturer_list"]), 3)
-        self.assertEqual(list(response.context["manufacturer_list"]), list(Manufacturer.objects.all()[5:]))
+        self.assertEqual(
+            list(response.context["manufacturer_list"]),
+            list(Manufacturer.objects.all()[5:])
+        )
 
     def test_view_search_form_in_context(self):
         response = self.client.get(reverse(MANUFACTURER_LIST_URL))
@@ -61,11 +67,16 @@ class PrivetManufacturerListViewTest(TestCase):
 
     def test_search_form_on_queryset(self):
         search_query = "1"
-        response = self.client.get(reverse(MANUFACTURER_LIST_URL), {"name": search_query})
+        response = self.client.get(
+            reverse(MANUFACTURER_LIST_URL),
+            {"name": search_query}
+        )
         self.assertEqual(response.status_code, 200)
 
         queryset = response.context["manufacturer_list"]
-        filtered_queryset = Manufacturer.objects.filter(name__icontains=search_query)
+        filtered_queryset = Manufacturer.objects.filter(
+            name__icontains=search_query
+        )
 
         self.assertEqual(list(queryset), list(filtered_queryset))
 
@@ -108,7 +119,10 @@ class PrivetCarListViewTest(TestCase):
         self.assertTrue("is_paginated" in response.context)
         self.assertTrue(response.context["is_paginated"] is True)
         self.assertTrue(len(response.context["car_list"]) == 5)
-        self.assertEqual(list(response.context["car_list"]), list(Car.objects.all()[:5]))
+        self.assertEqual(
+            list(response.context["car_list"]),
+            list(Car.objects.all()[:5])
+        )
 
     def test_list_all_cars(self):
         response = self.client.get(reverse(CAR_LIST_URL) + "?page=2")
@@ -116,7 +130,10 @@ class PrivetCarListViewTest(TestCase):
         self.assertTrue("is_paginated" in response.context)
         self.assertTrue(response.context["is_paginated"] is True)
         self.assertTrue(len(response.context["car_list"]) == 3)
-        self.assertEqual(list(response.context["car_list"]), list(Car.objects.all()[5:]))
+        self.assertEqual(
+            list(response.context["car_list"]),
+            list(Car.objects.all()[5:])
+        )
 
     def test_view_search_form_in_context(self):
         response = self.client.get(reverse(CAR_LIST_URL))
@@ -124,13 +141,21 @@ class PrivetCarListViewTest(TestCase):
 
     def test_search_form_on_queryset(self):
         model = "1"
-        response = self.client.get(reverse(CAR_LIST_URL), {"model": model})
+        response = self.client.get(
+            reverse(CAR_LIST_URL),
+            {"model": model}
+        )
         self.assertEqual(response.status_code, 200)
 
         queryset = response.context["car_list"]
-        filtered_queryset = Car.objects.filter(model__icontains=model)
+        filtered_queryset = Car.objects.filter(
+            model__icontains=model
+        )
 
-        self.assertEqual(list(queryset), list(filtered_queryset))
+        self.assertEqual(
+            list(queryset),
+            list(filtered_queryset)
+        )
 
 
 class PublicDriverListViewTest(TestCase):
@@ -165,7 +190,10 @@ class PrivetDriverListViewTest(TestCase):
         self.assertTrue("is_paginated" in response.context)
         self.assertTrue(response.context["is_paginated"] is True)
         self.assertTrue(len(response.context["driver_list"]) == 5)
-        self.assertEqual(list(response.context["driver_list"]), list(get_user_model().objects.all()[:5]))
+        self.assertEqual(
+            list(response.context["driver_list"]),
+            list(get_user_model().objects.all()[:5])
+        )
 
     def test_list_all_cars(self):
         response = self.client.get(reverse(DRIVER_LIST_URL) + "?page=2")
@@ -173,7 +201,10 @@ class PrivetDriverListViewTest(TestCase):
         self.assertTrue("is_paginated" in response.context)
         self.assertTrue(response.context["is_paginated"] is True)
         self.assertTrue(len(response.context["driver_list"]) == 3)
-        self.assertEqual(list(response.context["driver_list"]), list(get_user_model().objects.all()[5:]))
+        self.assertEqual(
+            list(response.context["driver_list"]),
+            list(get_user_model().objects.all()[5:])
+        )
 
     def test_view_search_form_in_context(self):
         response = self.client.get(reverse(DRIVER_LIST_URL))
@@ -181,10 +212,15 @@ class PrivetDriverListViewTest(TestCase):
 
     def test_search_form_on_queryset(self):
         username = "1"
-        response = self.client.get(reverse(DRIVER_LIST_URL), {"username": username})
+        response = self.client.get(
+            reverse(DRIVER_LIST_URL),
+            {"username": username}
+        )
         self.assertEqual(response.status_code, 200)
 
         queryset = response.context["driver_list"]
-        filtered_queryset = get_user_model().objects.filter(username__icontains=username)
+        filtered_queryset = get_user_model().objects.filter(
+            username__icontains=username
+        )
 
         self.assertEqual(list(queryset), list(filtered_queryset))
